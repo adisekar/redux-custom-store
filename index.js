@@ -45,14 +45,35 @@ const store = createStore(counterReducer);
 const render = () => {
     const counterEl = document.getElementById('counter');
     if (counterEl) {
+        let incrementBtn;
+        let decrementBtn;
+        const buttonEl = document.querySelector('button');
+        if (!buttonEl) {
+            incrementBtn = document.createElement("button");
+            decrementBtn = document.createElement("button");
+            incrementBtn.textContent = 'Increment';
+            decrementBtn.textContent = 'Decrement';
+
+            document.body.appendChild(incrementBtn);
+            document.body.appendChild(decrementBtn);
+        }
+
         counterEl.innerText = store.getState();
+
+        incrementBtn.addEventListener('click', () => {
+            store.dispatch({ type: 'INCREMENT' });
+        });
+
+        decrementBtn.addEventListener('click', () => {
+            store.dispatch({ type: 'DECREMENT' });
+        });
     }
 };
 
 render(); // for first time load
 store.subscribe(render); // fires any time actions is dispatched
 
-document.addEventListener('click', () => {
-    store.dispatch({ type: 'INCREMENT' })
-});
+// document.addEventListener('click', () => {
+//     store.dispatch({ type: 'INCREMENT' })
+// });
 
