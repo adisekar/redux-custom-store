@@ -36,7 +36,20 @@ const counterReducer = (state = 0, action) => {
     }
 };
 
-const store = createStore(counterReducer);
+// combine reducers from scratch
+const combineReducers = (reducers) => {
+    // return big reducer
+    return (state = {}, action) => {
+        return Object.keys(reducers).reduce(
+            (nextState, key) => {
+                nextState[key] = reducers[key](state[key], action);
+                return nextState;
+            }, {});
+    };
+};
+
+const rootReducer = combineReducers({ counter: counterReducer });
+const store = createStore(rootReducer);
 
 // console.log(store.getState());
 // console.log(store.dispatch({ type: 'INCREMENT' }));
@@ -56,17 +69,18 @@ const render = () => {
 
             document.body.appendChild(incrementBtn);
             document.body.appendChild(decrementBtn);
+
+            incrementBtn.addEventListener('click', () => {
+                store.dispatch({ type: 'INCREMENT' });
+            });
+
+            decrementBtn.addEventListener('click', () => {
+                store.dispatch({ type: 'DECREMENT' });
+            });
         }
 
-        counterEl.innerText = store.getState();
-
-        incrementBtn.addEventListener('click', () => {
-            store.dispatch({ type: 'INCREMENT' });
-        });
-
-        decrementBtn.addEventListener('click', () => {
-            store.dispatch({ type: 'DECREMENT' });
-        });
+        const { counter } = store.getState();
+        counterEl.innerText = counter;
     }
 };
 
